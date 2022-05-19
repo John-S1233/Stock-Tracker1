@@ -1,0 +1,130 @@
+##Defining Libraries
+import yfinance as yf
+import seaborn as sns
+import PySimpleGUI as sg
+import matplotlib.pyplot as plt
+plt.figure(figsize=(12,6))
+sns.set_style("ticks", {"axes.facecolor": ".9"})
+
+#first GUI instance
+layout = [[sg.Text("Stock Symbol?")],
+          [sg.Input()],
+         [[sg.Text("Graph in Months(M) Days(D) Years(Y) or YTD:")]],
+          [sg.Input()],
+          [sg.Button('Ok')] ]
+
+window = sg.Window('Stock Tracker', layout)
+event, values = window.read()
+window.close()
+
+##Identifies variables from GUI
+symbol_in = str.upper(values[0])
+symbol = yf.Ticker(symbol_in)
+grap_back1 = str.upper(values[1])
+graph_back = str(grap_back1.upper())
+
+#pysimple documentation
+# https://pypi.org/project/PySimpleGUI/
+#seaborn
+#http://seaborn.pydata.org/tutorial/aesthetics.html
+
+##Monthly Graph
+
+if graph_back == "M":
+    #Second Instance of the GUI
+    layoutm = [[sg.Text("How many months?")],
+    [sg.Input()],
+    [sg.Button('Ok')] ]
+    windowm = sg.Window('Stock Tracker', layoutm)
+    event, values = windowm.read()
+    #amount of months
+    m_d = str(values[0])
+    windowm.close
+    #period of graph
+    period_var = ''.join(('',m_d,'mo'))
+    #This defines the data
+    def get_closing_prices(symbol, period= period_var):
+        try:
+            #Uses ticker from user and retrieves data from Yfinances
+            ticker = yf.Ticker(symbol)
+            data = ticker.history(period)
+            return  data["Close"]
+        except Exception as e:
+            print("Invalid Arg")
+    ticker = symbol_in
+    period = period_var
+    prices_data = get_closing_prices(ticker, period)
+    prices_list = [round(val, 2) for val in prices_data.tolist()]
+    #Graphing
+    sns.lineplot(data=prices_data)
+    sns.set_theme()
+    plt.xticks(rotation=30)
+    plt.show()
+##Daily Graph
+elif graph_back == "D":
+    layoutd = [[sg.Text("How many days?")],
+               [sg.Input()],
+               [sg.Button('Ok')]]
+    windowd = sg.Window('Stock Tracker', layoutd)
+    event, values = windowd.read()
+    d_d = str(values[0])
+    windowd.close
+    period_var = ''.join(('', d_d, 'd'))
+    def get_closing_prices(symbol, period= period_var):
+        try:
+            ticker = yf.Ticker(symbol)
+            data = ticker.history(period)
+            return  data["Close"]
+        except Exception as e:
+            print("Invalid Arg")
+    ticker = symbol_in
+    period = period_var
+    prices_data = get_closing_prices(ticker, period)
+    prices_list = [round(val, 2) for val in prices_data.tolist()]
+    sns.lineplot(data=prices_data)
+    sns.set_theme()
+    plt.xticks(rotation=30)
+    plt.show()
+##Yearly Graph
+elif graph_back == "Y":
+    layouty = [[sg.Text("How many years?")],
+               [sg.Input()],
+               [sg.Button('Ok')]]
+    windowy = sg.Window('Stock Tracker', layouty)
+    event, values = windowy.read()
+    y_d = str(values[0])
+    windowy.close
+    period_var = ''.join(('', y_d, 'y'))
+    def get_closing_prices(symbol, period= period_var):
+        try:
+            ticker = yf.Ticker(symbol)
+            data = ticker.history(period)
+            return  data["Close"]
+        except Exception as e:
+            print("Invalid Arg")
+    ticker = symbol_in
+    period = period_var
+    prices_data = get_closing_prices(ticker, period)
+    prices_list = [round(val, 2) for val in prices_data.tolist()]
+    sns.lineplot(data=prices_data)
+    sns.set_theme()
+    plt.xticks(rotation=30)
+    plt.show()
+##YTD Graph
+elif graph_back == "YTD":
+    period_var = "YTD"
+    def get_closing_prices(symbol, period= period_var):
+        try:
+            ticker = yf.Ticker(symbol)
+            data = ticker.history(period)
+            return  data["Close"]
+        except Exception as e:
+            print("Invalid Arg")
+    ticker = symbol_in
+    period = period_var
+    prices_data = get_closing_prices(ticker, period)
+    prices_list = [round(val, 2) for val in prices_data.tolist()]
+    sns.lineplot(data=prices_data)
+    sns.set_theme()
+    plt.xticks(rotation=30)
+    plt.show()
